@@ -1,7 +1,7 @@
 # SlackBot
 Slack Bot for chat bot automation framework. And its specially for developed for Devops / Release engineer.
 
-##Features
+## Features
 1) RTM based connection.
 2) Tightly coupled with shell script for remote execution.
 3) Parallel handling of task so each task has own thread.
@@ -15,14 +15,15 @@ Slack Bot for chat bot automation framework. And its specially for developed for
 ./slackbot --config config.ini
 ```
 
-##Build from source
+## Build from source
 Using dep package management tool
 ```
 dep ensure
 go build -o slackbot
 ```
 
-##Configuration
+## Configuration
+Configuration sample file.
 ```
 [main] #MAIN config
 token = your-token  #Get the token from slack app.
