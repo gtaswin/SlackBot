@@ -35,7 +35,6 @@ shell = sh #Type of shell
 user1 = UFBJC6FB1 #User ID 1
 user2 = UFBJC6FB8 #User ID 2
 
-
 [chat] #Words/ Command to do so..
 hi = Hello !!! #Normal word
 do it = what to do???  

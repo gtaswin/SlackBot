@@ -1,7 +1,8 @@
-package auth
+package bot
 
 import (
   "fmt"
+  "github.com/go-ini/ini"
 )
 
 
