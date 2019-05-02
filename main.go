@@ -5,7 +5,7 @@ import (
   "flag"
   "strconv"
   "sync"
-  "github.com/gtaswin/SlackBot/internal"
+  "github.com/gtaswin/Slackbot/internal"
   "github.com/go-ini/ini"
   "github.com/nlopes/slack"
 )
