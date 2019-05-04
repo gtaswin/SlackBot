@@ -1,13 +1,15 @@
 package bot
 
 import (
-  "log"
-  "io"
-  "os/exec"
-  "github.com/go-ini/ini"
+	"io"
+	"log"
+	"os/exec"
+
+	"github.com/go-ini/ini"
 )
 
-func command(text string, cfg *ini.File) string {
+//Command executing the script that present on ini file
+func Command(text string, cfg *ini.File) string {
 	cmd := exec.Command(cfg.Section("main").Key("shell").String())
 	stdin, err := cmd.StdinPipe()
 	if err != nil {
@@ -23,5 +25,8 @@ func command(text string, cfg *ini.File) string {
 		log.Print(err)
 	}
 	a := string(out)
-  return a
+	if a == "" {
+		a = "Done!"
+	}
+	return a
 }
