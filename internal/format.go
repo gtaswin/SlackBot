@@ -1,11 +1,11 @@
 package bot
 
 import (
-	"log"
 	"regexp"
 	"strings"
 	"unicode/utf8"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/go-ini/ini"
 )
 
@@ -14,7 +14,7 @@ func Format(text string, cfg *ini.File) string {
 	var out string
 	reg, err := regexp.Compile("[^a-zA-Z0-9 ]+")
 	if err != nil {
-		log.Print(err)
+		log.Error(err)
 	}
 
 	text = reg.ReplaceAllString(text, "")

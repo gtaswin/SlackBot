@@ -1,11 +1,11 @@
 package bot
 
 import (
-	"fmt"
 	"runtime"
 	"sync"
 	"time"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/go-ini/ini"
 	"github.com/nlopes/slack"
 )
@@ -44,20 +44,20 @@ func Run(msg slack.RTMEvent, wg *sync.WaitGroup, cfg *ini.File, channels []slack
 		}
 
 	case *slack.PresenceChangeEvent:
-		fmt.Printf("Presence Change: %v\n", ev)
+		log.Info("Presence Change :", ev)
 
 	case *slack.LatencyReport:
-		fmt.Printf("Current latency: %v\n", ev.Value)
+		log.Info("Current latency :", ev.Value)
 
 	case *slack.RTMError:
-		fmt.Printf("Error: %s\n", ev.Error())
+		log.Error("Error: ", ev.Error())
 
 	case *slack.InvalidAuthEvent:
-		fmt.Printf("Invalid credentials")
+		log.Error("Invalid credentials")
 		return
 
 	default:
-		fmt.Printf("SlackBot: %v\n", msg.Data)
+		log.Info("SlackBot: ", msg.Data)
 	}
 	wg.Done()
 }

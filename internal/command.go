@@ -2,9 +2,9 @@ package bot
 
 import (
 	"io"
-	"log"
 	"os/exec"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/go-ini/ini"
 )
 
@@ -13,7 +13,7 @@ func Command(text string, cfg *ini.File) string {
 	cmd := exec.Command(cfg.Section("main").Key("shell").String())
 	stdin, err := cmd.StdinPipe()
 	if err != nil {
-		log.Print(err)
+		log.Error(err)
 	}
 
 	go func() {
@@ -22,7 +22,7 @@ func Command(text string, cfg *ini.File) string {
 	}()
 	out, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Print(err)
+		log.Error(err)
 	}
 	a := string(out)
 	if a == "" {
