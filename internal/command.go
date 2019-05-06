@@ -20,6 +20,7 @@ func Command(text string, cfg *ini.File) string {
 		defer stdin.Close()
 		io.WriteString(stdin, cfg.Section("chat").Key(text).String())
 	}()
+
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Error(err)

@@ -34,7 +34,7 @@ func Run(msg slack.RTMEvent, wg *sync.WaitGroup, cfg *ini.File, channels []slack
 				case <-chk:
 					runtime.Goexit()
 				default:
-					rtm.SendMessage(rtm.NewOutgoingMessage("Still Running...", ev.Channel))
+					rtm.SendMessage(rtm.NewOutgoingMessage("Wait..", ev.Channel))
 					runtime.Goexit()
 				}
 			}()
