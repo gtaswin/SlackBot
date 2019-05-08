@@ -38,7 +38,7 @@ func Run(msg slack.RTMEvent, wg *sync.WaitGroup, cfg *ini.File, channels []slack
 					runtime.Goexit()
 				}
 			}()
-
+			// log.Info("Received:", ev.Text)
 			rtm.SendMessage(rtm.NewOutgoingMessage(Format(ev.Text, cfg), ev.Channel))
 			close(chk)
 		}
@@ -47,7 +47,7 @@ func Run(msg slack.RTMEvent, wg *sync.WaitGroup, cfg *ini.File, channels []slack
 		log.Info("Presence Change :", ev)
 
 	case *slack.LatencyReport:
-		log.Info("Current latency :", ev.Value)
+		//log.Info("Current latency :", ev.Value)
 
 	case *slack.RTMError:
 		log.Error("Error: ", ev.Error())
