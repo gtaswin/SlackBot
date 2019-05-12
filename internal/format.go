@@ -28,7 +28,7 @@ func Format(text string, cfg *ini.File) string {
 		for _, check := range all {
 			s := Suggestion(text, check)
 			if s == true {
-				sug := fmt.Sprintln("Do you mean: ", check)
+				sug := fmt.Sprintln("You mean, ", check)
 				return sug
 			}
 		}
