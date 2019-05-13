@@ -1,6 +1,7 @@
 package bot
 
 import (
+	"bytes"
 	"fmt"
 	"regexp"
 	"strings"
@@ -23,19 +24,22 @@ func Format(text string, cfg *ini.File) string {
 	text = strings.ToLower(text)
 
 	all := cfg.Section("chat").KeyStrings()
+	var buffer bytes.Buffer
 
 	if cfg.Section("chat").Key(text).String() == "" {
 		for _, check := range all {
 			s := Suggestion(text, check)
 			if s == true {
-				sug := fmt.Sprintln("You mean, ", check)
-				return sug
+				sug := fmt.Sprintln(":small_blue_diamond: ", check)
+				buffer.WriteString(sug)
 			}
 		}
-	}
-	if cfg.Section("chat").Key(text).String() == "" {
-		a := cfg.Section("main").Key("noentry").String()
-		return a
+		if buffer.String() != "" {
+			s := fmt.Sprintln("Some Mistake..:sweat_smile:\n", "Here the related,\n", buffer.String())
+			return s
+		} else if buffer.String() == "" {
+			return "No Entries..:astonished:"
+		}
 	}
 	array := strings.Fields(text)
 	if array[0] == cfg.Section("main").Key("command").String() {
@@ -44,7 +48,7 @@ func Format(text string, cfg *ini.File) string {
 		out = cfg.Section("chat").Key(text).String()
 	}
 	if utf8.RuneCountInString(out) >= 3000 {
-		out = "Out of range"
+		out = "Out of range :anguished:"
 	}
 	return out
 }

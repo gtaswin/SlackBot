@@ -20,7 +20,7 @@ func Run(msg slack.RTMEvent, wg *sync.WaitGroup, cfg *ini.File, channels []slack
 		// fmt.Println("Infos:", ev.Info)
 		// fmt.Println("Connection counter:", ev.ConnectionCount)
 		for _, channel := range channels {
-			rtm.SendMessage(rtm.NewOutgoingMessage("I'm Back", channel.ID))
+			rtm.SendMessage(rtm.NewOutgoingMessage("I'm Back :grinning:", channel.ID))
 		}
 
 	case *slack.MessageEvent:
@@ -34,13 +34,15 @@ func Run(msg slack.RTMEvent, wg *sync.WaitGroup, cfg *ini.File, channels []slack
 				case <-chk:
 					runtime.Goexit()
 				default:
-					rtm.SendMessage(rtm.NewOutgoingMessage("Wait..", ev.Channel))
+					rtm.SendMessage(rtm.NewOutgoingMessage("Wait..:sleepy:", ev.Channel))
 					runtime.Goexit()
 				}
 			}()
 			// log.Info("Received:", ev.Text)
 			rtm.SendMessage(rtm.NewOutgoingMessage(Format(ev.Text, cfg), ev.Channel))
 			close(chk)
+		} else if ids == false {
+			rtm.SendMessage(rtm.NewOutgoingMessage("Unauthorized :cry:", ev.Channel))
 		}
 
 	case *slack.PresenceChangeEvent:

@@ -27,7 +27,7 @@ func Command(text string, cfg *ini.File) string {
 	}
 	a := string(out)
 	if a == "" {
-		a = "Done!"
+		a = "Done! :sunglasses:"
 	}
 	return a
 }

@@ -4,6 +4,7 @@ import (
 	"strings"
 )
 
+//Suggestion func for matching the text with the availables
 func Suggestion(text1 string, text2 string) bool {
 	array1 := strings.Fields(text1)
 	array2 := strings.Fields(text2)

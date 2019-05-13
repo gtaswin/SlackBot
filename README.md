@@ -1,5 +1,5 @@
 # SlackBot
-Slack Bot for chat bot automation framework. And its specially for developed for Devops / Release engineer.
+Slack Bot for chat bot automation framework. And its specially developed for Devops / Release engineer.
 
 ## Features
 1) RTM based connection.
@@ -31,7 +31,7 @@ debug = false #Set true / false for debug option
 command = job #Word to execute the shell script
 shell = sh #Type of shell
 
-[admin] #Admin ID's to work
+[admin] #User ID's to work with bot
 user1 = UFBJC6FB1 #User ID 1
 user2 = UFBJC6FB8 #User ID 2
 
