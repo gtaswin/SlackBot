@@ -24,8 +24,18 @@ func Run(msg slack.RTMEvent, wg *sync.WaitGroup, cfg *ini.File, channels []slack
 		}
 
 	case *slack.MessageEvent:
-		ids := Auth(ev.User, cfg)
+		var ids bool
 		chk := make(chan bool)
+
+		if cfg.Section("main").Key("admin").String() == "true" {
+			log.Info("Authorization Enabled !!!")
+			ids = Auth(ev.User, cfg)
+		} else if cfg.Section("main").Key("admin").String() == "false" {
+			log.Info("Authorization Disabled !!!")
+			ids = true
+		} else {
+			ids = true
+		}
 
 		if ids == true {
 			go func() {
@@ -48,7 +58,7 @@ func Run(msg slack.RTMEvent, wg *sync.WaitGroup, cfg *ini.File, channels []slack
 	case *slack.PresenceChangeEvent:
 		log.Info("Presence Change :", ev)
 
-	// case *slack.LatencyReport:
+	case *slack.LatencyReport:
 	//log.Info("Current latency :", ev.Value)
 
 	case *slack.RTMError:
