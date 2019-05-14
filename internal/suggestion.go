@@ -20,7 +20,6 @@ func Suggestion(text1 string, text2 string) bool {
 	}
 	if total > count {
 		return true
-	} else {
-		return false
 	}
+	return false
 }

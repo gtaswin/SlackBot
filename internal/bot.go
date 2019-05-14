@@ -48,8 +48,8 @@ func Run(msg slack.RTMEvent, wg *sync.WaitGroup, cfg *ini.File, channels []slack
 	case *slack.PresenceChangeEvent:
 		log.Info("Presence Change :", ev)
 
-	case *slack.LatencyReport:
-		//log.Info("Current latency :", ev.Value)
+	// case *slack.LatencyReport:
+	//log.Info("Current latency :", ev.Value)
 
 	case *slack.RTMError:
 		log.Error("Error: ", ev.Error())

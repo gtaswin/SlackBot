@@ -1,6 +1,7 @@
 package bot
 
 import (
+	"fmt"
 	"io"
 	"os/exec"
 
@@ -27,7 +28,9 @@ func Command(text string, cfg *ini.File) string {
 	}
 	a := string(out)
 	if a == "" {
-		a = "Done! :sunglasses:"
+		a = "Done! "
+	} else if a != "" {
+		a = fmt.Sprintln("Here the Output :sunglasses:\n", a)
 	}
 	return a
 }
