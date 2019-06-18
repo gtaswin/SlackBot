@@ -47,8 +47,8 @@ func Format(text string, cfg *ini.File) string {
 	} else {
 		out = cfg.Section("chat").Key(text).String()
 	}
-	if utf8.RuneCountInString(out) >= 3000 {
-		out = "Out of range :anguished:"
+	if utf8.RuneCountInString(out) >= 4000 {
+		out = fmt.Sprintln(out[0:3500], "...Out of range :anguished:")
 	}
 	return out
 }
