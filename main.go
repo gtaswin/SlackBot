@@ -37,7 +37,6 @@ func main() {
 		log.Panic("Fail to read Configuration")
 	}
 	token := cfg.Section("main").Key("token").String()
-	fmt.Println(token)
 	debug, _ := strconv.ParseBool(cfg.Section("main").Key("debug").String())
 	api := slack.New(token, slack.OptionDebug(debug))
 	// api = slack.New(token, slack.OptionDebug(false), slack.OptionLog(log.New(os.Stdout, "slack-bot: ", log.Lshortfile|log.LstdFlags)),)
@@ -45,7 +44,6 @@ func main() {
 	channels, _ := api.GetChannels(false)
 
 	go rtm.ManageConnection()
-
 	var wg sync.WaitGroup
 	for msg := range rtm.IncomingEvents {
 		cfg, err := ini.Load(*conf)

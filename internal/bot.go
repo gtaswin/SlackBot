@@ -1,7 +1,9 @@
 package bot
 
 import (
+	"regexp"
 	"runtime"
+	"strings"
 	"sync"
 	"time"
 
@@ -12,6 +14,7 @@ import (
 
 //Run for running according to RTM events
 func Run(msg slack.RTMEvent, wg *sync.WaitGroup, cfg *ini.File, channels []slack.Channel, rtm *slack.RTM) {
+Switching:
 	switch ev := msg.Data.(type) {
 	case *slack.HelloEvent:
 		// Ignore hello
@@ -24,6 +27,19 @@ func Run(msg slack.RTMEvent, wg *sync.WaitGroup, cfg *ini.File, channels []slack
 		}
 
 	case *slack.MessageEvent:
+
+		Name := strings.Fields(ev.Text)
+		Word := Name[len(Name)-1]
+		if cfg.Section("main").Key("name").String() == Word {
+			log.Info("Sent by User:", Word)
+			log.Info("Msg:", ev.Text)
+		} else {
+			break Switching
+		}
+
+		reg, _ := regexp.Compile(`\<.*\>`)
+		message := reg.ReplaceAllString(ev.Text, "")
+
 		var ids bool
 		chk := make(chan bool)
 
@@ -49,7 +65,7 @@ func Run(msg slack.RTMEvent, wg *sync.WaitGroup, cfg *ini.File, channels []slack
 				}
 			}()
 			// log.Info("Received:", ev.Text)
-			rtm.SendMessage(rtm.NewOutgoingMessage(Format(ev.Text, cfg), ev.Channel))
+			rtm.SendMessage(rtm.NewOutgoingMessage(Format(message, cfg), ev.Channel))
 			close(chk)
 		} else if ids == false {
 			rtm.SendMessage(rtm.NewOutgoingMessage("Unauthorized :cry:", ev.Channel))
