@@ -1,16 +1,21 @@
 package main
 
 import (
+	"bytes"
+	"encoding/json"
 	"flag"
 	"fmt"
+	"net/http"
 	"os"
+	"regexp"
 	"strconv"
-	"sync"
+	"time"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/go-ini/ini"
-	bot "github.com/gtaswin/Slackbot/internal"
+	Internal "github.com/gtaswin/Slackbot/internal"
 	"github.com/nlopes/slack"
+	"github.com/nlopes/slack/slackevents"
 )
 
 var (
@@ -41,18 +46,39 @@ func main() {
 	debug, _ := strconv.ParseBool(cfg.Section("main").Key("debug").String())
 	api := slack.New(token, slack.OptionDebug(debug))
 	// api = slack.New(token, slack.OptionDebug(false), slack.OptionLog(log.New(os.Stdout, "slack-bot: ", log.Lshortfile|log.LstdFlags)),)
-	rtm := api.NewRTM()
-	channels, _ := api.GetChannels(false)
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		buf := new(bytes.Buffer)
+		buf.ReadFrom(r.Body)
+		body := buf.String()
+		fmt.Println(body)
+		w.WriteHeader(http.json({ok: true});)
+		time.Sleep(500 * time.Second)
 
-	go rtm.ManageConnection()
-
-	var wg sync.WaitGroup
-	for msg := range rtm.IncomingEvents {
-		cfg, err := ini.Load(*conf)
-		if err != nil {
-			log.Error("Fail to read Configuration")
+		eventsAPIEvent, e := slackevents.ParseEvent(json.RawMessage(body), slackevents.OptionVerifyToken(&slackevents.TokenComparator{VerificationToken: "UXizpRhMmYkaSZjMpqheHLQS"}))
+		if e != nil {
+			w.WriteHeader(http.StatusInternalServerError)
 		}
-		wg.Add(1)
-		go bot.Run(msg, &wg, cfg, channels, rtm)
-	}
+
+		if eventsAPIEvent.Type == slackevents.URLVerification {
+			w.Header().Set("Content-Type", "application/json")
+			w.Write([]byte(body))
+		}
+		if eventsAPIEvent.Type == slackevents.CallbackEvent {
+			innerEvent := eventsAPIEvent.InnerEvent
+			switch ev := innerEvent.Data.(type) {
+			case *slackevents.AppMentionEvent:
+				// log.Info("Received:", ev.Text)
+				fmt.Println(eventsAPIEvent.Data)
+				fmt.Println(eventsAPIEvent.InnerEvent)
+				fmt.Println(ev.Channel)
+				reg, _ := regexp.Compile(`\<.*\>`)
+				message := reg.ReplaceAllString(ev.Text, "")
+				api.PostMessage(ev.Channel, slack.MsgOptionText("GTA", false))
+				api.PostMessage(ev.Channel, slack.MsgOptionText(Internal.Format(message, cfg), false))
+				fmt.Println("Sent")
+			}
+		}
+	})
+	fmt.Println("[INFO] Server listening")
+	http.ListenAndServe(":3000", nil)
 }
