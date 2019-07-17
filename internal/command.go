@@ -1,9 +1,10 @@
-package bot
+package internal
 
 import (
 	"fmt"
 	"io"
 	"os/exec"
+	"unicode/utf8"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/go-ini/ini"
@@ -19,7 +20,7 @@ func Command(text string, cfg *ini.File) string {
 
 	go func() {
 		defer stdin.Close()
-		io.WriteString(stdin, cfg.Section("chat").Key(text).String())
+		io.WriteString(stdin, text)
 	}()
 
 	out, err := cmd.CombinedOutput()
@@ -27,10 +28,13 @@ func Command(text string, cfg *ini.File) string {
 		log.Error(err)
 	}
 	a := string(out)
-	if a == "" {
-		a = "Done! "
-	} else if a != "" {
-		a = fmt.Sprintln("Here the Output :sunglasses:\n", a)
+	// if a == "" {
+	// 	a = "Done! "
+	// }
+
+	//Range management
+	if utf8.RuneCountInString(a) >= 4000 {
+		a = fmt.Sprintln(a[0:3500], "...Out of range :anguished:")
 	}
 	return a
 }

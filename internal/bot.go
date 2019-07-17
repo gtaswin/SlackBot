@@ -1,4 +1,4 @@
-package bot
+package internal
 
 import (
 	"regexp"
@@ -16,33 +16,33 @@ import (
 func Run(msg slack.RTMEvent, wg *sync.WaitGroup, cfg *ini.File, channels []slack.Channel, rtm *slack.RTM) {
 Switching:
 	switch ev := msg.Data.(type) {
-	case *slack.HelloEvent:
-		// Ignore hello
+	// case *slack.HelloEvent:
+	// Ignore hello
 
-	case *slack.ConnectedEvent:
-		// fmt.Println("Infos:", ev.Info)
-		// fmt.Println("Connection counter:", ev.ConnectionCount)
-		for _, channel := range channels {
-			rtm.SendMessage(rtm.NewOutgoingMessage("I'm Back :grinning:", channel.ID))
-		}
+	// case *slack.ConnectedEvent:
+	// 	for _, channel := range channels {
+	// 		rtm.SendMessage(rtm.NewOutgoingMessage("I'm Back :grinning:", channel.ID))
+	// 	}
 
 	case *slack.MessageEvent:
 
+		//Identifying my ID (Bot Id)
 		Name := strings.Fields(ev.Text)
 		Word := Name[len(Name)-1]
 		if cfg.Section("main").Key("name").String() == Word {
-			log.Info("Sent by User:", Word)
-			log.Info("Msg:", ev.Text)
+			log.Info("Sent by User: ", Word)
+			log.Info("Msg: ", ev.Text)
 		} else {
 			break Switching
 		}
 
+		//Regex to remove the @user
 		reg, _ := regexp.Compile(`\<.*\>`)
 		message := reg.ReplaceAllString(ev.Text, "")
 
+		//Authentication section
 		var ids bool
 		chk := make(chan bool)
-
 		if cfg.Section("main").Key("admin").String() == "true" {
 			log.Info("Authorization Enabled !!!")
 			ids = Auth(ev.User, cfg)
@@ -54,8 +54,9 @@ Switching:
 		}
 
 		if ids == true {
+			//Notifying for long running jobs
 			go func() {
-				time.Sleep(5 * time.Second)
+				time.Sleep(7 * time.Second)
 				select {
 				case <-chk:
 					runtime.Goexit()
@@ -74,7 +75,7 @@ Switching:
 	case *slack.PresenceChangeEvent:
 		log.Info("Presence Change :", ev)
 
-	case *slack.LatencyReport:
+	// case *slack.LatencyReport:
 	//log.Info("Current latency :", ev.Value)
 
 	case *slack.RTMError:

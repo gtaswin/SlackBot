@@ -1,11 +1,10 @@
-package bot
+package internal
 
 import (
 	"bytes"
 	"fmt"
 	"regexp"
 	"strings"
-	"unicode/utf8"
 
 	log "github.com/Sirupsen/logrus"
 	"github.com/go-ini/ini"
@@ -23,9 +22,9 @@ func Format(text string, cfg *ini.File) string {
 	text = strings.TrimSpace(text)
 	text = strings.ToLower(text)
 
+	//Suggestion part
 	all := cfg.Section("chat").KeyStrings()
 	var buffer bytes.Buffer
-
 	if cfg.Section("chat").Key(text).String() == "" {
 		for _, check := range all {
 			s := Suggestion(text, check)
@@ -41,14 +40,14 @@ func Format(text string, cfg *ini.File) string {
 			return "No Entries..:astonished:"
 		}
 	}
+
+	//Identifying the command vs normal word for execution
 	array := strings.Fields(text)
 	if array[0] == cfg.Section("main").Key("command").String() {
-		out = Command(text, cfg)
+		out = fmt.Sprintln("Here the Output :sunglasses:\n", Command(cfg.Section("chat").Key(text).String(), cfg))
 	} else {
 		out = cfg.Section("chat").Key(text).String()
 	}
-	if utf8.RuneCountInString(out) >= 4000 {
-		out = fmt.Sprintln(out[0:3500], "...Out of range :anguished:")
-	}
+
 	return out
 }
