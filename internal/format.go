@@ -29,12 +29,12 @@ func Format(text string, cfg *ini.File) string {
 		for _, check := range all {
 			s := Suggestion(text, check)
 			if s == true {
-				sug := fmt.Sprintln(":small_blue_diamond: ", check)
+				sug := fmt.Sprintln(":small_blue_diamond: _", check, "_")
 				buffer.WriteString(sug)
 			}
 		}
 		if buffer.String() != "" {
-			s := fmt.Sprintln("Some Mistake..:sweat_smile:\n", "Here the related,\n", buffer.String())
+			s := fmt.Sprintln("Here the related,\n", buffer.String())
 			return s
 		} else if buffer.String() == "" {
 			return "No Entries..:astonished:"
@@ -44,7 +44,7 @@ func Format(text string, cfg *ini.File) string {
 	//Identifying the command vs normal word for execution
 	array := strings.Fields(text)
 	if array[0] == cfg.Section("main").Key("command").String() {
-		out = fmt.Sprintln("Here the Output :sunglasses:\n", Command(cfg.Section("chat").Key(text).String(), cfg))
+		out = fmt.Sprintln("*Completed :sunglasses:*\n", Command(cfg.Section("chat").Key(text).String(), cfg))
 	} else {
 		out = cfg.Section("chat").Key(text).String()
 	}

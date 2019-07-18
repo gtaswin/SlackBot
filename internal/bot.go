@@ -30,15 +30,22 @@ Switching:
 		Name := strings.Fields(ev.Text)
 		Word := Name[len(Name)-1]
 		if cfg.Section("main").Key("name").String() == Word {
-			log.Info("Sent by User: ", Word)
 			log.Info("Msg: ", ev.Text)
 		} else {
+			log.Warning("Sent to User: ", Word)
 			break Switching
 		}
 
 		//Regex to remove the @user
-		reg, _ := regexp.Compile(`\<.*\>`)
+		reg, error := regexp.Compile(`\<.*\>`)
+		if error != nil {
+			log.Error("Failed to compile the message with regex")
+		}
 		message := reg.ReplaceAllString(ev.Text, "")
+		if message == "" {
+			log.Warn("Empty Message")
+			break Switching
+		}
 
 		//Authentication section
 		var ids bool
@@ -61,7 +68,7 @@ Switching:
 				case <-chk:
 					runtime.Goexit()
 				default:
-					rtm.SendMessage(rtm.NewOutgoingMessage("Wait..:sleepy:", ev.Channel))
+					rtm.SendMessage(rtm.NewOutgoingMessage("`Wait..`:sleepy:", ev.Channel))
 					runtime.Goexit()
 				}
 			}()
@@ -69,7 +76,7 @@ Switching:
 			rtm.SendMessage(rtm.NewOutgoingMessage(Format(message, cfg), ev.Channel))
 			close(chk)
 		} else if ids == false {
-			rtm.SendMessage(rtm.NewOutgoingMessage("Unauthorized :cry:", ev.Channel))
+			rtm.SendMessage(rtm.NewOutgoingMessage("`Unauthorized` :cry:", ev.Channel))
 		}
 
 	case *slack.PresenceChangeEvent:

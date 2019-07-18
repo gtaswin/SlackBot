@@ -34,7 +34,7 @@ func Command(text string, cfg *ini.File) string {
 
 	//Range management
 	if utf8.RuneCountInString(a) >= 4000 {
-		a = fmt.Sprintln(a[0:3500], "...Out of range :anguished:")
+		a = fmt.Sprintln(a[0:3500], "`...Out of range` :anguished:")
 	}
 	return a
 }
